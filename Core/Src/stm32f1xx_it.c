@@ -60,7 +60,17 @@ extern DMA_HandleTypeDef hdma_i2c1_tx;
 extern I2C_HandleTypeDef hi2c1;
 /* USER CODE BEGIN EV */
 
-extern uint16_t ADC_CONVERSION_TIMER;
+extern uint8_t BUT_MENU_STATE,
+               BUT_PLUS_STATE,
+               BUT_MINUS_STATE;
+
+extern uint16_t ADC_CONVERSION_TIMER,
+                BUT_MENU_TIMER_0,
+                BUT_MENU_TIMER_1,
+                BUT_PLUS_TIMER_0,
+                BUT_PLUS_TIMER_1,
+                BUT_MINUS_TIMER_0,
+                BUT_MINUS_TIMER_1;               
 
 /* USER CODE END EV */
 
@@ -192,6 +202,73 @@ void SysTick_Handler(void)
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
 	ADC_CONVERSION_TIMER++;
+
+  uint8_t BUT_MENU_SIGNAL = HAL_GPIO_ReadPin(BUT_MENU_GPIO_Port, BUT_MENU_Pin); 
+  uint8_t BUT_PLUS_SIGNAL = HAL_GPIO_ReadPin(BUT_PLUS_GPIO_Port, BUT_PLUS_Pin);
+  uint8_t BUT_MINUS_SIGNAL = HAL_GPIO_ReadPin(BUT_MINUS_GPIO_Port, BUT_MINUS_Pin);
+    
+  if(BUT_MENU_SIGNAL == 0)
+  {
+    BUT_MENU_TIMER_0++;
+    BUT_MENU_TIMER_1=0;
+    if(BUT_MENU_TIMER_0 > DEBOUNCE_TIME)
+    {
+      BUT_MENU_TIMER_0 = DEBOUNCE_TIME + 1;
+      BUT_MENU_STATE = 1;
+    }
+  }
+  else
+  {
+    BUT_MENU_TIMER_0=0;
+    BUT_MENU_TIMER_1++;
+    if(BUT_MENU_TIMER_1 > DEBOUNCE_TIME)
+    {
+      BUT_MENU_TIMER_1 = DEBOUNCE_TIME + 1;
+      BUT_MENU_STATE = 0;
+    }
+  }
+
+  if(BUT_PLUS_SIGNAL == 0)
+  {
+    BUT_PLUS_TIMER_0++;
+    BUT_PLUS_TIMER_1=0;
+    if(BUT_PLUS_TIMER_0 > DEBOUNCE_TIME)
+    {
+      BUT_PLUS_TIMER_0 = DEBOUNCE_TIME + 1;
+      BUT_PLUS_STATE = 1;
+    }
+  }
+  else
+  {
+    BUT_PLUS_TIMER_0=0;
+    BUT_PLUS_TIMER_1++;
+    if(BUT_PLUS_TIMER_1 > DEBOUNCE_TIME)
+    {
+      BUT_PLUS_TIMER_1 = DEBOUNCE_TIME + 1;
+      BUT_PLUS_STATE = 0;
+    }
+  }
+
+  if(BUT_MINUS_SIGNAL == 0)
+  {
+    BUT_MINUS_TIMER_0++;
+    BUT_MINUS_TIMER_1=0;
+    if(BUT_MINUS_TIMER_0 > DEBOUNCE_TIME)
+    {
+      BUT_MINUS_TIMER_0 = DEBOUNCE_TIME + 1;
+      BUT_MINUS_STATE = 1;
+    }
+  }
+  else
+  {
+    BUT_MINUS_TIMER_0=0;
+    BUT_MINUS_TIMER_1++;
+    if(BUT_MINUS_TIMER_1 > DEBOUNCE_TIME)
+    {
+      BUT_MINUS_TIMER_1 = DEBOUNCE_TIME + 1;
+      BUT_MINUS_STATE = 0;
+    }
+  }
   /* USER CODE END SysTick_IRQn 1 */
 }
 

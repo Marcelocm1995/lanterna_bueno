@@ -58,20 +58,23 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define POWER_CMD_Pin GPIO_PIN_14
-#define POWER_CMD_GPIO_Port GPIOC
 #define BAT_MON_Pin GPIO_PIN_0
 #define BAT_MON_GPIO_Port GPIOA
-#define PWM_LED_Pin GPIO_PIN_0
-#define PWM_LED_GPIO_Port GPIOB
-#define BUT_M_Pin GPIO_PIN_12
-#define BUT_M_GPIO_Port GPIOB
-#define BUT___Pin GPIO_PIN_13
-#define BUT___GPIO_Port GPIOB
-#define BUT__B14_Pin GPIO_PIN_14
-#define BUT__B14_GPIO_Port GPIOB
+#define PWM_LED_SUP_Pin GPIO_PIN_0
+#define PWM_LED_SUP_GPIO_Port GPIOB
+#define PWM_LED_INF_Pin GPIO_PIN_1
+#define PWM_LED_INF_GPIO_Port GPIOB
+#define BUT_MINUS_Pin GPIO_PIN_12
+#define BUT_MINUS_GPIO_Port GPIOB
+#define BUT_PLUS_Pin GPIO_PIN_13
+#define BUT_PLUS_GPIO_Port GPIOB
+#define BUT_MENU_Pin GPIO_PIN_14
+#define BUT_MENU_GPIO_Port GPIOB
+#define POWER_CMD_Pin GPIO_PIN_15
+#define POWER_CMD_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
+#define DEBOUNCE_TIME 100-1
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

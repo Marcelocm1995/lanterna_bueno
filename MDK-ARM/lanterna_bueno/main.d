@@ -34,5 +34,5 @@ lanterna_bueno/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Core\Inc\i2c.h ..\Core\Inc\tim.h ..\Core\Inc\gpio.h \
   ..\SSD1306\ssd1306.h ..\SSD1306\ssd1306_defines.h ..\SSD1306\fonts.h \
   D:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h \
-  D:\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h ..\Button\button.h \
+  D:\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h \
   D:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h

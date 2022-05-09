@@ -29,7 +29,6 @@
 /* USER CODE BEGIN Includes */
 
 #include "ssd1306.h"
-#include "button.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -54,7 +53,8 @@
 /* USER CODE BEGIN PM */
 
 #define POWER_CMD(a) HAL_GPIO_WritePin(POWER_CMD_GPIO_Port, POWER_CMD_Pin, a)
-#define LIGHT_PWM(a) __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, a)
+#define LIGHT_PWM_SUP(a) __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, a)
+#define LIGHT_PWM_INF(a) __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, a)
 
 /* USER CODE END PM */
 
@@ -65,10 +65,21 @@
 char Str_LCD[64];
 
 uint8_t LIGHT_LEVEL = 0,
-				STATE;
+        BUT_MENU_STATE,
+        BUT_PLUS_STATE,
+        BUT_MINUS_STATE,
+        OLD_BUT_MENU_STATE,
+        OLD_BUT_PLUS_STATE,
+        OLD_BUT_MINUS_STATE;
 				
 uint16_t ADC_CONVERSION_TIMER = 0,
-				 ADC_VAL[2];
+				 ADC_VAL[2],
+         BUT_MENU_TIMER_0,
+         BUT_MENU_TIMER_1,
+         BUT_PLUS_TIMER_0,
+         BUT_PLUS_TIMER_1,
+         BUT_MINUS_TIMER_0,
+         BUT_MINUS_TIMER_1;
 
 float TEMP,
 			BAT_PCT;
@@ -132,18 +143,10 @@ int main(void)
 	ssd1306_WriteString( "Light" , Font_16x26);
 	ssd1306_UpdateScreen();
 	
-	if(CheckButtonState() >= MEDIUM_CLICK)
-	{
-		POWER_CMD(1);
-	}
-	
-	else
-	{
-		POWER_CMD(0);
-	}
-	
 	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3);
-	LIGHT_PWM(0);
+  HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
+	LIGHT_PWM_SUP(0);
+	LIGHT_PWM_INF(0);
 		
   /* USER CODE END 2 */
 
@@ -151,38 +154,35 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		if( (CheckButtonState() == SHORT_CLICK) && (STATE == 0) )
+    /*When Pressed, set the machine state*/
+		if( (BUT_MENU_STATE == 1) && (OLD_BUT_MENU_STATE == 0) )
 		{
-			STATE = 1;
-			LIGHT_LEVEL++;
-			if(LIGHT_LEVEL > 4)
-				LIGHT_LEVEL = 0;
-			
-			switch (LIGHT_LEVEL)
-			{
-				case 0: LIGHT_PWM(0);  ssd1306_SetCursor (2,0); ssd1306_WriteString( "Power 0" , Font_16x26); ssd1306_UpdateScreen();	break;		
-				case 1: LIGHT_PWM(20); ssd1306_SetCursor (2,0); ssd1306_WriteString( "Power 1" , Font_16x26); ssd1306_UpdateScreen();	break;
-				case 2: LIGHT_PWM(40); ssd1306_SetCursor (2,0); ssd1306_WriteString( "Power 2" , Font_16x26); ssd1306_UpdateScreen();	break;
-				case 3: LIGHT_PWM(60); ssd1306_SetCursor (2,0); ssd1306_WriteString( "Power 3" , Font_16x26); ssd1306_UpdateScreen();	break;
-				case 4: LIGHT_PWM(80); ssd1306_SetCursor (2,0); ssd1306_WriteString( "Power 4" , Font_16x26); ssd1306_UpdateScreen();	break;
-			}
-		}
-		
-		else if( (CheckButtonState() == LONG_CLICK) && (STATE == 0) )
+			OLD_BUT_MENU_STATE = 1;
+    }
+    if( (BUT_PLUS_STATE == 1) && (OLD_BUT_PLUS_STATE == 0) )
 		{
-			STATE = 1;
-			ssd1306_SetCursor (2,0); 
-			ssd1306_WriteString( "Sleep" , Font_16x26);
-			ssd1306_UpdateScreen();
-			HAL_Delay(1000);
-			POWER_CMD(0);
-		}
-		
-		else
+			OLD_BUT_PLUS_STATE = 1;
+    }
+    if( (BUT_MINUS_STATE == 1) && (OLD_BUT_MINUS_STATE == 0) )
 		{
-			STATE = 0;
-		}
-		
+			OLD_BUT_MINUS_STATE = 1;
+    }
+
+    /*When Released, reset the machine state*/
+    if( (BUT_MENU_STATE == 0) && (OLD_BUT_MENU_STATE == 1) )
+		{
+			OLD_BUT_MENU_STATE = 0;
+    }
+    if( (BUT_PLUS_STATE == 0) && (OLD_BUT_PLUS_STATE == 1) )
+		{
+			OLD_BUT_PLUS_STATE = 0;
+    }
+    if( (BUT_MINUS_STATE == 0) && (OLD_BUT_MINUS_STATE == 1) )
+		{
+			OLD_BUT_MINUS_STATE = 0;
+    }
+	
+		/*Reads Battery level and temperature periodically (every 2 seconds)*/
 		if(ADC_CONVERSION_TIMER > 2000)
 		{
 			ADC_CONVERSION_TIMER = 0;
