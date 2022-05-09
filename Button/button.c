@@ -20,10 +20,10 @@ uint32_t Button_Timer = 0;
 
 uint8_t CheckButtonState()
 {
-	if(HAL_GPIO_ReadPin(BUT1_GPIO_Port, BUT1_Pin) == BUTTON_TYPE)
+	if(HAL_GPIO_ReadPin(BUT_M_GPIO_Port, BUT_M_Pin) == BUTTON_TYPE)
 	{
 		Button_Timer = HAL_GetTick();
-		while(HAL_GPIO_ReadPin(BUT1_GPIO_Port, BUT1_Pin) == BUTTON_TYPE)
+		while(HAL_GPIO_ReadPin(BUT_M_GPIO_Port, BUT_M_Pin) == BUTTON_TYPE)
 		{
 			if(HAL_GetTick() > Button_Timer + 6000)
 			break;

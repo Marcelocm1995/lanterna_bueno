@@ -60,6 +60,8 @@ extern DMA_HandleTypeDef hdma_i2c1_tx;
 extern I2C_HandleTypeDef hi2c1;
 /* USER CODE BEGIN EV */
 
+extern uint16_t ADC_CONVERSION_TIMER;
+
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -189,8 +191,8 @@ void SysTick_Handler(void)
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
-	
-	/* USER CODE END SysTick_IRQn 1 */
+	ADC_CONVERSION_TIMER++;
+  /* USER CODE END SysTick_IRQn 1 */
 }
 
 /******************************************************************************/

@@ -58,12 +58,18 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define BUT1_Pin GPIO_PIN_13
-#define BUT1_GPIO_Port GPIOC
 #define POWER_CMD_Pin GPIO_PIN_14
 #define POWER_CMD_GPIO_Port GPIOC
+#define BAT_MON_Pin GPIO_PIN_0
+#define BAT_MON_GPIO_Port GPIOA
 #define PWM_LED_Pin GPIO_PIN_0
 #define PWM_LED_GPIO_Port GPIOB
+#define BUT_M_Pin GPIO_PIN_12
+#define BUT_M_GPIO_Port GPIOB
+#define BUT___Pin GPIO_PIN_13
+#define BUT___GPIO_Port GPIOB
+#define BUT__B14_Pin GPIO_PIN_14
+#define BUT__B14_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

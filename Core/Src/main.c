@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "dma.h"
 #include "i2c.h"
 #include "tim.h"
@@ -43,6 +44,10 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
+#define Avg_Slope .0025
+#define V25 0.76
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -57,14 +62,24 @@
 
 /* USER CODE BEGIN PV */
 
+char Str_LCD[64];
+
 uint8_t LIGHT_LEVEL = 0,
 				STATE;
+				
+uint16_t ADC_CONVERSION_TIMER = 0,
+				 ADC_VAL[2];
+
+float TEMP,
+			BAT_PCT;
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+
+float Map (float inVal, float inMin, float inMax, float outMin, float outMax);
 
 /* USER CODE END PFP */
 
@@ -104,6 +119,7 @@ int main(void)
   MX_I2C1_Init();
   MX_DMA_Init();
   MX_TIM3_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 	
 	ssd1306_Init();
@@ -128,7 +144,7 @@ int main(void)
 	
 	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3);
 	LIGHT_PWM(0);
-	
+		
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -166,6 +182,31 @@ int main(void)
 		{
 			STATE = 0;
 		}
+		
+		if(ADC_CONVERSION_TIMER > 2000)
+		{
+			ADC_CONVERSION_TIMER = 0;
+
+			HAL_ADC_Start(&hadc1);
+			HAL_ADC_PollForConversion(&hadc1, 1000);
+			ADC_VAL[0] = HAL_ADC_GetValue(&hadc1);
+			HAL_ADC_Stop(&hadc1);
+
+			HAL_ADC_PollForConversion(&hadc1, 1000);
+			ADC_VAL[1] = HAL_ADC_GetValue(&hadc1);
+			HAL_ADC_Stop(&hadc1);
+
+			TEMP = ((3.3*ADC_VAL[1]/4095 - V25)/Avg_Slope)+25;
+			
+			float BAT_VOLTAGE = 3.3*ADC_VAL[0]/4095;
+			
+			BAT_PCT = Map(BAT_VOLTAGE, 3.3, 4.1, 0, 100);
+			
+			sprintf(Str_LCD, "%.0f%", BAT_PCT);
+			ssd1306_SetCursor (0,0); ssd1306_WriteString( Str_LCD, Font_7x10); ssd1306_UpdateScreen();
+			sprintf(Str_LCD, "%.1fC", TEMP);
+			ssd1306_SetCursor (0,0); ssd1306_WriteString( Str_LCD, Font_7x10); ssd1306_UpdateScreen();
+		}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -181,6 +222,7 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
@@ -206,9 +248,26 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
+  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV2;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+  {
+    Error_Handler();
+  }
 }
 
 /* USER CODE BEGIN 4 */
+
+float Map (float inVal, float inMin, float inMax, float outMin, float outMax)
+{
+	if(inVal<inMin)
+		inVal=inMin;
+	
+	if(inVal>inMax)
+		inVal=inMax;
+	
+	return ( (inVal - inMin)*(outMax - outMin)/(inMax - inMin) + outMin );
+}
 
 /* USER CODE END 4 */
 

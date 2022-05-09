@@ -22,15 +22,17 @@ lanterna_bueno/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h \
+  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h \
+  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_i2c.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h \
-  ..\Core\Inc\dma.h ..\Core\Inc\main.h ..\Core\Inc\i2c.h \
-  ..\Core\Inc\tim.h ..\Core\Inc\gpio.h ..\SSD1306\ssd1306.h \
-  ..\SSD1306\ssd1306_defines.h ..\SSD1306\fonts.h \
+  ..\Core\Inc\adc.h ..\Core\Inc\main.h ..\Core\Inc\dma.h \
+  ..\Core\Inc\i2c.h ..\Core\Inc\tim.h ..\Core\Inc\gpio.h \
+  ..\SSD1306\ssd1306.h ..\SSD1306\ssd1306_defines.h ..\SSD1306\fonts.h \
   D:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h \
   D:\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h ..\Button\button.h \
   D:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h
