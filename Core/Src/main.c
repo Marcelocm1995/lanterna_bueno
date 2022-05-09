@@ -64,25 +64,17 @@
 
 char Str_LCD[64];
 
-uint8_t LIGHT_LEVEL = 0,
-        BUT_MENU_STATE,
-        BUT_PLUS_STATE,
-        BUT_MINUS_STATE,
-        OLD_BUT_MENU_STATE,
-        OLD_BUT_PLUS_STATE,
-        OLD_BUT_MINUS_STATE;
+uint8_t LIGHT_LEVEL = 0;
 				
 uint16_t ADC_CONVERSION_TIMER = 0,
-				 ADC_VAL[2],
-         BUT_MENU_TIMER_0,
-         BUT_MENU_TIMER_1,
-         BUT_PLUS_TIMER_0,
-         BUT_PLUS_TIMER_1,
-         BUT_MINUS_TIMER_0,
-         BUT_MINUS_TIMER_1;
+				 ADC_VAL[2];
 
 float TEMP,
 			BAT_PCT;
+
+vBUT MENU_BUTTON,
+     PLUS_BUTTON,
+     MINUS_BUTTON;
 
 /* USER CODE END PV */
 
@@ -154,33 +146,58 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /*When Pressed, set the machine state*/
-		if( (BUT_MENU_STATE == 1) && (OLD_BUT_MENU_STATE == 0) )
+		if(MENU_BUTTON.State == LONG_CLICK)  
 		{
-			OLD_BUT_MENU_STATE = 1;
+      POWER_CMD(0);
     }
-    if( (BUT_PLUS_STATE == 1) && (OLD_BUT_PLUS_STATE == 0) )
-		{
-			OLD_BUT_PLUS_STATE = 1;
+    else if(MENU_BUTTON.State == MEDIUM_CLICK)
+    {
+
     }
-    if( (BUT_MINUS_STATE == 1) && (OLD_BUT_MINUS_STATE == 0) )
+    else if(MENU_BUTTON.State == SHORT_CLICK)
+    {
+
+    }
+    else
+    {
+      /*NO_CLICK (do nothing)*/
+    }
+    
+    if(PLUS_BUTTON.State == LONG_CLICK)  
 		{
-			OLD_BUT_MINUS_STATE = 1;
+      
+    }
+    else if(PLUS_BUTTON.State == MEDIUM_CLICK)
+    {
+
+    }
+    else if(PLUS_BUTTON.State == SHORT_CLICK)
+    {
+
+    }
+    else
+    {
+      /*NO_CLICK (do nothing)*/
     }
 
-    /*When Released, reset the machine state*/
-    if( (BUT_MENU_STATE == 0) && (OLD_BUT_MENU_STATE == 1) )
+    if(PLUS_BUTTON.State == LONG_CLICK)  
 		{
-			OLD_BUT_MENU_STATE = 0;
+      
     }
-    if( (BUT_PLUS_STATE == 0) && (OLD_BUT_PLUS_STATE == 1) )
-		{
-			OLD_BUT_PLUS_STATE = 0;
+    else if(PLUS_BUTTON.State == MEDIUM_CLICK)
+    {
+
     }
-    if( (BUT_MINUS_STATE == 0) && (OLD_BUT_MINUS_STATE == 1) )
-		{
-			OLD_BUT_MINUS_STATE = 0;
+    else if(PLUS_BUTTON.State == SHORT_CLICK)
+    {
+
     }
+    else
+    {
+      /*NO_CLICK (do nothing)*/
+    }
+  
+    
 	
 		/*Reads Battery level and temperature periodically (every 2 seconds)*/
 		if(ADC_CONVERSION_TIMER > 2000)

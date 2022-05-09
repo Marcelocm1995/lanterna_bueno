@@ -60,18 +60,15 @@ extern DMA_HandleTypeDef hdma_i2c1_tx;
 extern I2C_HandleTypeDef hi2c1;
 /* USER CODE BEGIN EV */
 
-extern uint8_t BUT_MENU_STATE,
-               BUT_PLUS_STATE,
-               BUT_MINUS_STATE;
+extern vBUT MENU_BUTTON,
+            PLUS_BUTTON,
+            MINUS_BUTTON;
 
-extern uint16_t ADC_CONVERSION_TIMER,
-                BUT_MENU_TIMER_0,
-                BUT_MENU_TIMER_1,
-                BUT_PLUS_TIMER_0,
-                BUT_PLUS_TIMER_1,
-                BUT_MINUS_TIMER_0,
-                BUT_MINUS_TIMER_1;               
+extern uint16_t ADC_CONVERSION_TIMER;            
 
+uint8_t BUT_MENU_SIGNAL, OLD_BUT_MENU_SIGNAL,
+        BUT_PLUS_SIGNAL, OLD_BUT_PLUS_SIGNAL,
+        BUT_MINUS_SIGNAL, OLD_BUT_MINUS_SIGNAL;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -202,73 +199,98 @@ void SysTick_Handler(void)
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
 	ADC_CONVERSION_TIMER++;
-
-  uint8_t BUT_MENU_SIGNAL = HAL_GPIO_ReadPin(BUT_MENU_GPIO_Port, BUT_MENU_Pin); 
-  uint8_t BUT_PLUS_SIGNAL = HAL_GPIO_ReadPin(BUT_PLUS_GPIO_Port, BUT_PLUS_Pin);
-  uint8_t BUT_MINUS_SIGNAL = HAL_GPIO_ReadPin(BUT_MINUS_GPIO_Port, BUT_MINUS_Pin);
     
-  if(BUT_MENU_SIGNAL == 0)
+  if( (BUT_MENU_SIGNAL == 0) && (OLD_BUT_MENU_SIGNAL == 1) )
   {
-    BUT_MENU_TIMER_0++;
-    BUT_MENU_TIMER_1=0;
-    if(BUT_MENU_TIMER_0 > DEBOUNCE_TIME)
+    MENU_BUTTON.Timer++;
+    if(MENU_BUTTON.Timer > LONG_CLICK_DEBOUNCE)
     {
-      BUT_MENU_TIMER_0 = DEBOUNCE_TIME + 1;
-      BUT_MENU_STATE = 1;
+      MENU_BUTTON.State = LONG_CLICK;
+      OLD_BUT_MENU_SIGNAL = 0;
+    }
+    else if(MENU_BUTTON.Timer > MEDIUM_CLICK_DEBOUNCE)
+    {
+      MENU_BUTTON.State = MEDIUM_CLICK;
+      OLD_BUT_MENU_SIGNAL = 0;
+    }
+    else if(MENU_BUTTON.Timer > SHORT_CLICK_DEBOUNCE)
+    {
+      MENU_BUTTON.State = SHORT_CLICK;
+      OLD_BUT_MENU_SIGNAL = 0;
+    }
+    else
+    {
+      MENU_BUTTON.State = NO_CLICK;
+      OLD_BUT_MENU_SIGNAL = 1;
     }
   }
   else
   {
-    BUT_MENU_TIMER_0=0;
-    BUT_MENU_TIMER_1++;
-    if(BUT_MENU_TIMER_1 > DEBOUNCE_TIME)
-    {
-      BUT_MENU_TIMER_1 = DEBOUNCE_TIME + 1;
-      BUT_MENU_STATE = 0;
-    }
+    MENU_BUTTON.Timer = 0;
+    OLD_BUT_MENU_SIGNAL = 1;
   }
 
-  if(BUT_PLUS_SIGNAL == 0)
+  if( (BUT_PLUS_SIGNAL == 0) && (OLD_BUT_PLUS_SIGNAL == 1) )
   {
-    BUT_PLUS_TIMER_0++;
-    BUT_PLUS_TIMER_1=0;
-    if(BUT_PLUS_TIMER_0 > DEBOUNCE_TIME)
+    PLUS_BUTTON.Timer++;
+    if(PLUS_BUTTON.Timer > LONG_CLICK_DEBOUNCE)
     {
-      BUT_PLUS_TIMER_0 = DEBOUNCE_TIME + 1;
-      BUT_PLUS_STATE = 1;
+      PLUS_BUTTON.State = LONG_CLICK;
+      OLD_BUT_PLUS_SIGNAL = 0;
+    }
+    else if(PLUS_BUTTON.Timer > MEDIUM_CLICK_DEBOUNCE)
+    {
+      PLUS_BUTTON.State = MEDIUM_CLICK;
+      OLD_BUT_PLUS_SIGNAL = 0;
+    }
+    else if(PLUS_BUTTON.Timer > SHORT_CLICK_DEBOUNCE)
+    {
+      PLUS_BUTTON.State = SHORT_CLICK;
+      OLD_BUT_PLUS_SIGNAL = 0;
+    }
+    else
+    {
+      PLUS_BUTTON.State = NO_CLICK;
+      OLD_BUT_PLUS_SIGNAL = 1;
     }
   }
   else
   {
-    BUT_PLUS_TIMER_0=0;
-    BUT_PLUS_TIMER_1++;
-    if(BUT_PLUS_TIMER_1 > DEBOUNCE_TIME)
-    {
-      BUT_PLUS_TIMER_1 = DEBOUNCE_TIME + 1;
-      BUT_PLUS_STATE = 0;
-    }
+    PLUS_BUTTON.Timer = 0;
+    OLD_BUT_PLUS_SIGNAL = 1;
   }
 
-  if(BUT_MINUS_SIGNAL == 0)
+  if( (BUT_MINUS_SIGNAL == 0) && (OLD_BUT_MINUS_SIGNAL == 1) )
   {
-    BUT_MINUS_TIMER_0++;
-    BUT_MINUS_TIMER_1=0;
-    if(BUT_MINUS_TIMER_0 > DEBOUNCE_TIME)
+    MINUS_BUTTON.Timer++;
+    if(MINUS_BUTTON.Timer > LONG_CLICK_DEBOUNCE)
     {
-      BUT_MINUS_TIMER_0 = DEBOUNCE_TIME + 1;
-      BUT_MINUS_STATE = 1;
+      MINUS_BUTTON.State = LONG_CLICK;
+      OLD_BUT_MINUS_SIGNAL = 0;
+    }
+    else if(MINUS_BUTTON.Timer > MEDIUM_CLICK_DEBOUNCE)
+    {
+      MINUS_BUTTON.State = MEDIUM_CLICK;
+      OLD_BUT_MINUS_SIGNAL = 0;
+    }
+    else if(MINUS_BUTTON.Timer > SHORT_CLICK_DEBOUNCE)
+    {
+      MINUS_BUTTON.State = SHORT_CLICK;
+      OLD_BUT_MINUS_SIGNAL = 0;
+    }
+    else
+    {
+      MINUS_BUTTON.State = NO_CLICK;
+      OLD_BUT_MINUS_SIGNAL = 1;
     }
   }
   else
   {
-    BUT_MINUS_TIMER_0=0;
-    BUT_MINUS_TIMER_1++;
-    if(BUT_MINUS_TIMER_1 > DEBOUNCE_TIME)
-    {
-      BUT_MINUS_TIMER_1 = DEBOUNCE_TIME + 1;
-      BUT_MINUS_STATE = 0;
-    }
+    MINUS_BUTTON.Timer = 0;
+    OLD_BUT_MINUS_SIGNAL = 1;
   }
+
+  
   /* USER CODE END SysTick_IRQn 1 */
 }
 
@@ -305,6 +327,26 @@ void I2C1_EV_IRQHandler(void)
   /* USER CODE BEGIN I2C1_EV_IRQn 1 */
 
   /* USER CODE END I2C1_EV_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI line[15:10] interrupts.
+  */
+void EXTI15_10_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+
+  /* USER CODE END EXTI15_10_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_12);
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_14);
+  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
+
+  BUT_MENU_SIGNAL = HAL_GPIO_ReadPin(BUT_MENU_GPIO_Port, BUT_MENU_Pin); 
+  BUT_PLUS_SIGNAL = HAL_GPIO_ReadPin(BUT_PLUS_GPIO_Port, BUT_PLUS_Pin);
+  BUT_MINUS_SIGNAL = HAL_GPIO_ReadPin(BUT_MINUS_GPIO_Port, BUT_MINUS_Pin);
+
+  /* USER CODE END EXTI15_10_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

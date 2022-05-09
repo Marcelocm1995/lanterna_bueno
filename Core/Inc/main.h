@@ -38,6 +38,20 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 
+typedef struct
+{
+  uint8_t State;
+  uint16_t Timer;
+}vBUT;
+
+typedef enum
+{
+  NO_CLICK,
+  SHORT_CLICK,
+  MEDIUM_CLICK,
+  LONG_CLICK
+}BUTTON_STATES;
+
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -66,15 +80,21 @@ void Error_Handler(void);
 #define PWM_LED_INF_GPIO_Port GPIOB
 #define BUT_MINUS_Pin GPIO_PIN_12
 #define BUT_MINUS_GPIO_Port GPIOB
+#define BUT_MINUS_EXTI_IRQn EXTI15_10_IRQn
 #define BUT_PLUS_Pin GPIO_PIN_13
 #define BUT_PLUS_GPIO_Port GPIOB
+#define BUT_PLUS_EXTI_IRQn EXTI15_10_IRQn
 #define BUT_MENU_Pin GPIO_PIN_14
 #define BUT_MENU_GPIO_Port GPIOB
+#define BUT_MENU_EXTI_IRQn EXTI15_10_IRQn
 #define POWER_CMD_Pin GPIO_PIN_15
 #define POWER_CMD_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
-#define DEBOUNCE_TIME 100-1
+#define SHORT_CLICK_DEBOUNCE  100-1
+#define MEDIUM_CLICK_DEBOUNCE 1500-1
+#define LONG_CLICK_DEBOUNCE   3000-1
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
