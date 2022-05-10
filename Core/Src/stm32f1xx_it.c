@@ -66,7 +66,7 @@ extern vBUT MENU_BUTTON,
 
 extern uint16_t ADC_CONVERSION_TIMER,
                 UptadeLightLevelTimer,
-                RefreshDisplayTimer;            
+                RefreshDisplayTimer;
 
 uint8_t BUT_MENU_SIGNAL, OLD_BUT_MENU_SIGNAL,
         BUT_PLUS_SIGNAL, OLD_BUT_PLUS_SIGNAL,
@@ -294,7 +294,7 @@ void SysTick_Handler(void)
     OLD_BUT_MINUS_SIGNAL = 1;
   }
 
-  
+
   /* USER CODE END SysTick_IRQn 1 */
 }
 
@@ -346,7 +346,7 @@ void EXTI15_10_IRQHandler(void)
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_14);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
 
-  BUT_MENU_SIGNAL = HAL_GPIO_ReadPin(BUT_MENU_GPIO_Port, BUT_MENU_Pin); 
+  BUT_MENU_SIGNAL = HAL_GPIO_ReadPin(BUT_MENU_GPIO_Port, BUT_MENU_Pin);
   BUT_PLUS_SIGNAL = HAL_GPIO_ReadPin(BUT_PLUS_GPIO_Port, BUT_PLUS_Pin);
   BUT_MINUS_SIGNAL = HAL_GPIO_ReadPin(BUT_MINUS_GPIO_Port, BUT_MINUS_Pin);
 

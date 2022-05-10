@@ -82,7 +82,7 @@ char Str_LCD[64];
 uint8_t SUP_LIGHT_LEVEL = 0,
         INF_LIGHT_LEVEL = 0,
         MENU_MODE = CITY;
-				
+
 uint16_t ADC_CONVERSION_TIMER = 0,
          UptadeLightLevelTimer = 0,
          RefreshDisplayTimer = 0,
@@ -143,7 +143,7 @@ int main(void)
   MX_TIM3_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-	
+
 	ssd1306_Init();
   ssd1306_FlipScreenVertically();
   ssd1306_Clear();
@@ -153,16 +153,15 @@ int main(void)
 	ssd1306_SetCursor(30,0);
 	ssd1306_WriteString("Light", Font_16x26);
 	ssd1306_UpdateScreen();
-	
+
 	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
 	LIGHT_PWM_SUP(SUP_LIGHT_LEVEL);
 	LIGHT_PWM_INF(INF_LIGHT_LEVEL);
-	
-  if(MENU_BUTTON.State >= MEDIUM_CLICK)  
-	{
-    POWER_CMD(1);
-  }
+
+  while(MENU_BUTTON.State < MEDIUM_CLICK);
+
+  POWER_CMD(1);
 
   /* USER CODE END 2 */
 
@@ -171,7 +170,7 @@ int main(void)
   while (1)
   {
     /*Start Menu Button Routine*/
-		if(MENU_BUTTON.State == LONG_CLICK)  
+		if(MENU_BUTTON.State == LONG_CLICK)
 		{
       POWER_CMD(0);
     }
@@ -196,9 +195,9 @@ int main(void)
     /*End Menu Button Routine*/
 
     /*Start Plus Button Routine*/
-    if(PLUS_BUTTON.State == LONG_CLICK)  
+    if(PLUS_BUTTON.State == LONG_CLICK)
 		{
-      
+
     }
     else if(PLUS_BUTTON.State == MEDIUM_CLICK)
     {
@@ -207,7 +206,7 @@ int main(void)
     else if(PLUS_BUTTON.State == SHORT_CLICK)
     {
       if(MENU_MODE == TRAIL)
-        INF_LIGHT_LEVEL++;      
+        INF_LIGHT_LEVEL++;
     }
     else
     {
@@ -216,16 +215,16 @@ int main(void)
     /*End Plus Button Routine*/
 
     /*Start Minus Button Routine*/
-    if(MINUS_BUTTON.State == LONG_CLICK)  
+    if(MINUS_BUTTON.State == LONG_CLICK)
 		{
-      
+
     }
     else if(MINUS_BUTTON.State == MEDIUM_CLICK)
     {
 
     }
     else if(MINUS_BUTTON.State == SHORT_CLICK)
-    { 
+    {
       if(MENU_MODE == TRAIL)
         INF_LIGHT_LEVEL--;
     }
@@ -256,18 +255,35 @@ int main(void)
 
       if(MENU_MODE == CITY)
 			{
-        ssd1306_SetCursor(2,0); 
+        ssd1306_SetCursor(2,0);
 				ssd1306_WriteString("CITY", Font_7x10);
 			}
       else if(MENU_MODE == TRAIL)
 			{
-        ssd1306_SetCursor(2,0); 
+        ssd1306_SetCursor(2,0);
 				ssd1306_WriteString("TRAIL", Font_7x10);
 			}
       else
       {
 				/*do nothing*/
 			}
+      if(MENU_MODE == TRAIL)
+      {
+        if(SUP_LIGHT_LEVEL == LV0) sprintf(Str_LCD, "Level 0");
+        else if(SUP_LIGHT_LEVEL == LV1) sprintf(Str_LCD, "Level 1");
+        else if(SUP_LIGHT_LEVEL == LV2) sprintf(Str_LCD, "Level 2");
+        else if(SUP_LIGHT_LEVEL == LV3) sprintf(Str_LCD, "Level 3");
+        else if(SUP_LIGHT_LEVEL == LV4) sprintf(Str_LCD, "Level 4");
+        else { /*do nothing*/ }
+        ssd1306_SetCursor(2,64);
+				ssd1306_WriteString(Str_LCD, Font_7x10);
+      }
+      else
+      {
+        ssd1306_SetCursor(2,64);
+				ssd1306_WriteString("       ", Font_7x10);
+      }
+
 			ssd1306_UpdateScreen();
     }
 
@@ -319,11 +335,11 @@ int main(void)
 			HAL_ADC_Stop(&hadc1);
 
 			TEMP = ((3.3*ADC_VAL[1]/4095 - V25)/Avg_Slope)+25;
-			
+
 			float BAT_VOLTAGE = 3.3*ADC_VAL[0]/4095;
-			
+
 			BAT_PCT = Map(BAT_VOLTAGE, 3.3, 4.1, 0, 100);
-			
+
 			sprintf(Str_LCD, "%.0f%", BAT_PCT);
 			ssd1306_SetCursor (0,0); ssd1306_WriteString( Str_LCD, Font_7x10); ssd1306_UpdateScreen();
 			sprintf(Str_LCD, "%.1fC", TEMP);
@@ -384,10 +400,10 @@ float Map (float inVal, float inMin, float inMax, float outMin, float outMax)
 {
 	if(inVal<inMin)
 		inVal=inMin;
-	
+
 	if(inVal>inMax)
 		inVal=inMax;
-	
+
 	return ( (inVal - inMin)*(outMax - outMin)/(inMax - inMin) + outMin );
 }
 
