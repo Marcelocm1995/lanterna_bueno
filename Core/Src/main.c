@@ -38,7 +38,14 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+typedef enum
+{
+  LV0 = 0,
+  LV1,
+  LV2,
+  LV3,
+  LV4
+}LIGHT_LEVEL;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -64,9 +71,11 @@
 
 char Str_LCD[64];
 
-uint8_t LIGHT_LEVEL = 0;
+uint8_t SUP_LIGHT_LEVEL = 0,
+        INF_LIGHT_LEVEL = 0;
 				
 uint16_t ADC_CONVERSION_TIMER = 0,
+         UptadeLightLevelTimer = 0,
 				 ADC_VAL[2];
 
 float TEMP,
@@ -129,40 +138,51 @@ int main(void)
   ssd1306_FlipScreenVertically();
   ssd1306_Clear();
   ssd1306_SetColor(White);
-	ssd1306_SetCursor (2,0);
-	ssd1306_WriteString( "Bueno" , Font_16x26);
-	ssd1306_SetCursor (30,0);
-	ssd1306_WriteString( "Light" , Font_16x26);
+	ssd1306_SetCursor(2,0);
+	ssd1306_WriteString("Bueno", Font_16x26);
+	ssd1306_SetCursor(30,0);
+	ssd1306_WriteString("Light", Font_16x26);
 	ssd1306_UpdateScreen();
 	
 	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
-	LIGHT_PWM_SUP(0);
-	LIGHT_PWM_INF(0);
-		
+	LIGHT_PWM_SUP(SUP_LIGHT_LEVEL);
+	LIGHT_PWM_INF(INF_LIGHT_LEVEL);
+	
+  if(MENU_BUTTON.State >= MEDIUM_CLICK)  
+	{
+    POWER_CMD(1);
+  }
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    /*Start Menu Button Routine*/
 		if(MENU_BUTTON.State == LONG_CLICK)  
 		{
       POWER_CMD(0);
     }
     else if(MENU_BUTTON.State == MEDIUM_CLICK)
     {
-
+      ssd1306_SetCursor(2,0); ssd1306_WriteString("Menu", Font_7x10); ssd1306_UpdateScreen();
     }
     else if(MENU_BUTTON.State == SHORT_CLICK)
     {
-
+      if(SUP_LIGHT_LEVEL != LV0)
+        SUP_LIGHT_LEVEL = LV0;
+      else
+        SUP_LIGHT_LEVEL = LV4;
     }
     else
     {
       /*NO_CLICK (do nothing)*/
     }
-    
+    /*End Menu Button Routine*/
+
+    /*Start Plus Button Routine*/
     if(PLUS_BUTTON.State == LONG_CLICK)  
 		{
       
@@ -173,32 +193,78 @@ int main(void)
     }
     else if(PLUS_BUTTON.State == SHORT_CLICK)
     {
-
+      INF_LIGHT_LEVEL++;      
     }
     else
     {
       /*NO_CLICK (do nothing)*/
     }
+    /*End Plus Button Routine*/
 
-    if(PLUS_BUTTON.State == LONG_CLICK)  
+    /*Start Minus Button Routine*/
+    if(MINUS_BUTTON.State == LONG_CLICK)  
 		{
       
     }
-    else if(PLUS_BUTTON.State == MEDIUM_CLICK)
+    else if(MINUS_BUTTON.State == MEDIUM_CLICK)
     {
 
     }
-    else if(PLUS_BUTTON.State == SHORT_CLICK)
-    {
-
+    else if(MINUS_BUTTON.State == SHORT_CLICK)
+    { 
+      INF_LIGHT_LEVEL--;
     }
     else
     {
       /*NO_CLICK (do nothing)*/
     }
-  
-    
-	
+    /*End Minus Button Routine*/
+
+    /*Start of saturation light levels*/
+    if(INF_LIGHT_LEVEL > LV4)
+      INF_LIGHT_LEVEL = LV4;
+    if(INF_LIGHT_LEVEL < LV0)
+      INF_LIGHT_LEVEL = LV0;
+
+    if(SUP_LIGHT_LEVEL > LV4)
+      SUP_LIGHT_LEVEL = LV4;
+    if(SUP_LIGHT_LEVEL < LV0)
+      SUP_LIGHT_LEVEL = LV0;
+    /*End of saturation light levels*/
+
+    /*Start of Task for update light levels*/
+    if(UptadeLightLevelTimer > 100)
+    {
+      UptadeLightLevelTimer = 0;
+
+      if(SUP_LIGHT_LEVEL == LV0)
+        LIGHT_PWM_SUP(0);
+      else if(SUP_LIGHT_LEVEL == LV1)
+        LIGHT_PWM_SUP(20);
+      else if(SUP_LIGHT_LEVEL == LV2)
+        LIGHT_PWM_SUP(40);
+      else if(SUP_LIGHT_LEVEL == LV3)
+        LIGHT_PWM_SUP(60);
+      else if(SUP_LIGHT_LEVEL == LV4)
+        LIGHT_PWM_SUP(80);
+      else
+        {/*do nothing*/}
+
+      if(INF_LIGHT_LEVEL == LV0)
+        LIGHT_PWM_INF(0);
+      else if(INF_LIGHT_LEVEL == LV1)
+        LIGHT_PWM_INF(20);
+      else if(INF_LIGHT_LEVEL == LV2)
+        LIGHT_PWM_INF(40);
+      else if(INF_LIGHT_LEVEL == LV3)
+        LIGHT_PWM_INF(60);
+      else if(INF_LIGHT_LEVEL == LV4)
+        LIGHT_PWM_INF(80);
+      else
+        {/*do nothing*/}
+    }
+	  /*End of Task for update light levels*/
+
 		/*Reads Battery level and temperature periodically (every 2 seconds)*/
 		if(ADC_CONVERSION_TIMER > 2000)
 		{
