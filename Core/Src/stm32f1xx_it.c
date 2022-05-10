@@ -65,7 +65,8 @@ extern vBUT MENU_BUTTON,
             MINUS_BUTTON;
 
 extern uint16_t ADC_CONVERSION_TIMER,
-                UptadeLightLevelTimer;            
+                UptadeLightLevelTimer,
+                RefreshDisplayTimer;            
 
 uint8_t BUT_MENU_SIGNAL, OLD_BUT_MENU_SIGNAL,
         BUT_PLUS_SIGNAL, OLD_BUT_PLUS_SIGNAL,
@@ -201,7 +202,8 @@ void SysTick_Handler(void)
   /* USER CODE BEGIN SysTick_IRQn 1 */
 	ADC_CONVERSION_TIMER++;
   UptadeLightLevelTimer++;
-  
+  RefreshDisplayTimer++;
+
   if( (BUT_MENU_SIGNAL == 0) && (OLD_BUT_MENU_SIGNAL == 1) )
   {
     MENU_BUTTON.Timer++;

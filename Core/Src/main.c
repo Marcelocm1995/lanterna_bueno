@@ -46,6 +46,14 @@ typedef enum
   LV3,
   LV4
 }LIGHT_LEVEL;
+
+typedef enum
+{
+  CITY = 0,
+  TRAIL,
+  MENU_TYPE_QTD
+}MENU_TYPE;
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -72,10 +80,12 @@ typedef enum
 char Str_LCD[64];
 
 uint8_t SUP_LIGHT_LEVEL = 0,
-        INF_LIGHT_LEVEL = 0;
+        INF_LIGHT_LEVEL = 0,
+        MENU_MODE = CITY;
 				
 uint16_t ADC_CONVERSION_TIMER = 0,
          UptadeLightLevelTimer = 0,
+         RefreshDisplayTimer = 0,
 				 ADC_VAL[2];
 
 float TEMP,
@@ -167,14 +177,17 @@ int main(void)
     }
     else if(MENU_BUTTON.State == MEDIUM_CLICK)
     {
-      ssd1306_SetCursor(2,0); ssd1306_WriteString("Menu", Font_7x10); ssd1306_UpdateScreen();
+      MENU_MODE++;
     }
     else if(MENU_BUTTON.State == SHORT_CLICK)
     {
-      if(SUP_LIGHT_LEVEL != LV0)
-        SUP_LIGHT_LEVEL = LV0;
-      else
-        SUP_LIGHT_LEVEL = LV4;
+      if(MENU_MODE == CITY)
+      {
+        if(SUP_LIGHT_LEVEL != LV0)
+          SUP_LIGHT_LEVEL = LV0;
+        else
+          SUP_LIGHT_LEVEL = LV4;
+      }
     }
     else
     {
@@ -193,7 +206,8 @@ int main(void)
     }
     else if(PLUS_BUTTON.State == SHORT_CLICK)
     {
-      INF_LIGHT_LEVEL++;      
+      if(MENU_MODE == TRAIL)
+        INF_LIGHT_LEVEL++;      
     }
     else
     {
@@ -212,7 +226,8 @@ int main(void)
     }
     else if(MINUS_BUTTON.State == SHORT_CLICK)
     { 
-      INF_LIGHT_LEVEL--;
+      if(MENU_MODE == TRAIL)
+        INF_LIGHT_LEVEL--;
     }
     else
     {
@@ -231,6 +246,30 @@ int main(void)
     if(SUP_LIGHT_LEVEL < LV0)
       SUP_LIGHT_LEVEL = LV0;
     /*End of saturation light levels*/
+
+    if(MENU_MODE > MENU_TYPE_QTD-1)
+      MENU_MODE = CITY;
+
+    if(RefreshDisplayTimer > 100)
+    {
+      RefreshDisplayTimer = 0;
+
+      if(MENU_MODE == CITY)
+			{
+        ssd1306_SetCursor(2,0); 
+				ssd1306_WriteString("CITY", Font_7x10);
+			}
+      else if(MENU_MODE == TRAIL)
+			{
+        ssd1306_SetCursor(2,0); 
+				ssd1306_WriteString("TRAIL", Font_7x10);
+			}
+      else
+      {
+				/*do nothing*/
+			}
+			ssd1306_UpdateScreen();
+    }
 
     /*Start of Task for update light levels*/
     if(UptadeLightLevelTimer > 100)
