@@ -41,6 +41,7 @@ extern "C" {
 typedef struct
 {
   uint8_t State;
+  uint8_t StartTimer;
   uint16_t Timer;
 }vBUT;
 
@@ -74,19 +75,20 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define BAT_MON_Pin GPIO_PIN_0
 #define BAT_MON_GPIO_Port GPIOA
-#define PWM_LED_SUP_Pin GPIO_PIN_0
-#define PWM_LED_SUP_GPIO_Port GPIOB
-#define PWM_LED_INF_Pin GPIO_PIN_1
-#define PWM_LED_INF_GPIO_Port GPIOB
+#define PWM_LED_SUPH_Pin GPIO_PIN_6
+#define PWM_LED_SUPH_GPIO_Port GPIOA
+#define PWM_LED_SUPL_Pin GPIO_PIN_7
+#define PWM_LED_SUPL_GPIO_Port GPIOA
+#define PWM_LED_INFH_Pin GPIO_PIN_0
+#define PWM_LED_INFH_GPIO_Port GPIOB
+#define PWM_LED_INFL_Pin GPIO_PIN_1
+#define PWM_LED_INFL_GPIO_Port GPIOB
 #define BUT_MINUS_Pin GPIO_PIN_12
 #define BUT_MINUS_GPIO_Port GPIOB
-#define BUT_MINUS_EXTI_IRQn EXTI15_10_IRQn
 #define BUT_PLUS_Pin GPIO_PIN_13
 #define BUT_PLUS_GPIO_Port GPIOB
-#define BUT_PLUS_EXTI_IRQn EXTI15_10_IRQn
 #define BUT_MENU_Pin GPIO_PIN_14
 #define BUT_MENU_GPIO_Port GPIOB
-#define BUT_MENU_EXTI_IRQn EXTI15_10_IRQn
 #define POWER_CMD_Pin GPIO_PIN_15
 #define POWER_CMD_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */

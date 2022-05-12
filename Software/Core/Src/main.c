@@ -172,14 +172,17 @@ int main(void)
     /*Start Menu Button Routine*/
 		if(MENU_BUTTON.State == LONG_CLICK)
 		{
+      MENU_BUTTON.State = NO_CLICK;
       POWER_CMD(0);
     }
     else if(MENU_BUTTON.State == MEDIUM_CLICK)
     {
+      MENU_BUTTON.State = NO_CLICK;
       MENU_MODE++;
     }
     else if(MENU_BUTTON.State == SHORT_CLICK)
     {
+      MENU_BUTTON.State = NO_CLICK;
       if(MENU_MODE == CITY)
       {
         if(SUP_LIGHT_LEVEL != LV0)
@@ -197,14 +200,15 @@ int main(void)
     /*Start Plus Button Routine*/
     if(PLUS_BUTTON.State == LONG_CLICK)
 		{
-
+      PLUS_BUTTON.State == NO_CLICK;
     }
     else if(PLUS_BUTTON.State == MEDIUM_CLICK)
     {
-
+      PLUS_BUTTON.State == NO_CLICK;
     }
     else if(PLUS_BUTTON.State == SHORT_CLICK)
     {
+      PLUS_BUTTON.State == NO_CLICK;
       if(MENU_MODE == TRAIL)
         INF_LIGHT_LEVEL++;
     }
@@ -217,14 +221,15 @@ int main(void)
     /*Start Minus Button Routine*/
     if(MINUS_BUTTON.State == LONG_CLICK)
 		{
-
+      MINUS_BUTTON.State == NO_CLICK;
     }
     else if(MINUS_BUTTON.State == MEDIUM_CLICK)
     {
-
+      MINUS_BUTTON.State == NO_CLICK;
     }
     else if(MINUS_BUTTON.State == SHORT_CLICK)
     {
+      MINUS_BUTTON.State == NO_CLICK;
       if(MENU_MODE == TRAIL)
         INF_LIGHT_LEVEL--;
     }
